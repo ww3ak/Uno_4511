@@ -3,30 +3,53 @@ import time
 
 COLORS = ('red', 'yellow', 'blue', 'green')
 NUMBERS = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
-# Add action cards later
 
 class Game:
-    '''
-    PARAM: number of players
-    '''
-    def __init__(self, num_player):
+    def __init__(self, num_player, deck):
         self.num_player = num_player
+        self.deck = deck
         self.players = []
+        self.current_player =  None
 
     def new_game(self):
-        player_count = 0;
-        for player in self.num_player:
-            player_count +=1
-            self.players.append(Player(player_count))
+        self.deck.shuffle_deck() 
+        for i in range(self.num_player):
+            player = Player(i + 1)
+            player.hand = Hand()  
+            for _ in range(7):  
+                player.hand.add_card(self.deck.draw_card())
+            self.players.append(player)
+    
+    def start_game(self):
+        discard_pile = []
+        self.current_player = random.choice(self.players)
+        print(f"Player {self.current_player.number} gets to draw the first card!")
+        player_response = input(f"Player {self.current_player.number}, please type 'draw' to draw the first card: ")
+        if player_response.lower() != 'draw':
+            print("Please type 'draw' to continue!")
+        else:
+            draw_card = self.deck.draw_card()
+            discard_pile.append(draw_card)
+            self.next_player()  
 
-        
+
+    def show_disc_pile(self, pile):
+        for card in pile:
+            print(card)
+
+    def next_player(self):
+        current_index = self.players.index(self.current_player)
+        next_index = (current_index + 1) % self.num_player   # Loop back to 0 after the last player
+        self.current_player = self.players[next_index]
+        print(f"Next player is Player {self.current_player.number}.")
+
 class Player:
     def __init__(self, number):
         self.number = number
-        self.hand = []
+        self.hand = None
 
-
-
+    def __str__(self):
+        return f"{self.number}"
 
 class Card:
     def __init__(self, color, number):
@@ -40,8 +63,8 @@ class Hand:
     def __init__(self):
         self.cards = []
     
-    def add_card(self):
-        self.cards.append(random_card())
+    def add_card(self, card):
+        self.cards.append(card)
 
     def play_card(self, card):
         self.cards.remove(card)
@@ -49,20 +72,16 @@ class Hand:
 
     def show_hand(self):
         for card in self.cards:
-            print(card)  
-    
-    def new_hand(self, deck):
-        for _ in range(7):  
-            self.add_card(deck.draw_card())  
-        print('Here\'s your new hand!')
+            print(card)
 
 class Deck:
     def __init__(self):
         self.deck = []
         self.new_deck()
-        #deck is made up of 108 cards: 25 red, 25 blue, 25 green, 25 yellow. 
-        #2 each on 1-9 and 1 zero
-        #2 draw +2, 2 reverse, 2 skip, 4 wild, 4 wild draw four
+
+    def __str__(self):
+        return f"{self.deck}"
+
     def new_deck(self):
         self.deck = []
         for color in COLORS:
@@ -71,40 +90,25 @@ class Deck:
                 self.deck.append(Card(color, number))
                 if number != '0':
                     self.deck.append(Card(color, number))
-    def show_deck(self):
-        for card in self.deck:
-            print(card)
+
+    def shuffle_deck(self):
+        random.shuffle(self.deck)
 
     def draw_card(self):
-        if len(self.deck) > 0:
+        if self.deck:
             return self.deck.pop()
         else:
             print("The deck is empty!")
             return None
 
-    def shuffel_deck(self):
-        random.shuffle(self.deck)
-        print(type(self.deck))
-        
-    
-def random_card():
-    # Returns a random card with a color and a number
-    ranColor = random.choice(COLORS)
-    ranNumber = random.choice(NUMBERS)
-    return Card(ranColor, ranNumber)
-
 def main():
-    # newHand = Hand()
-    # newHand.new_hand()
-    # newHand.show_hand()
-    # print("helo world")
-    newDeck = Deck()
-    # newDeck.show_deck()
-    newDeck.shuffel_deck()
-    # print(type(newDeck))
-    newDeck.show_deck()
-
-
+    game = Game(2, Deck())
+    game.new_game()
+    # Show hands of all players
+    # for i, player in enumerate(game.players, 1):
+    #     print(f"Player {i}'s hand:")
+    #     player.hand.show_hand()
+    game.start_game()
 
 if __name__ == "__main__":
     main()

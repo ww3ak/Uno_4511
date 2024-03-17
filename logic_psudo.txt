@@ -1,0 +1,6 @@
+start_game logic:
+
+random player selected to draw first
+    card drawn and stored in discard pile
+    
+next player 
