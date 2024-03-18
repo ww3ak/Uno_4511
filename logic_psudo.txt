@@ -4,3 +4,16 @@ random player selected to draw first
     card drawn and stored in discard pile
     
 next player 
+
+
+'''
+GAME LOGIC
+Randomly choose who goes first before game loop 
+Display Current Card on top of discard pile 
+Display Current Players Hand 
+Display Playable cards
+If none present or player wants to draw --> 0
+    if 0:
+    player draws card
+    added to hand 
+'''
