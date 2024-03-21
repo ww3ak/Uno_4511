@@ -14,6 +14,7 @@ class Game:
         self.current_player_index = 0
         self.current_card = None #refers to current card on top of discard pile 
         self.current_player = None #self.players[self.current_player_index]
+        self.playable = [] #refers to playable cards, reset every turn 
 
     def deal_initial_cards(self):
         for player in self.players:
@@ -46,11 +47,13 @@ class Game:
                     self.current_player.show_hand() #show player new hand
                 elif (response == '1'):#player chooses to play
                     cnt = 0
-                    for card in self.current_player.hand:
+                    for card in self.playable:
                         print(f'[{cnt}]: {card}') 
                         cnt +=1
+                    self.show_current_card()
                     played_card = input(f"Please choose the number of the card you would like to play.")
-                    print(f'Player {self.current_player.player_id} plays a {self.current_player.hand[int(played_card)]}')
+                    print(f'Player {self.current_player.player_id} plays a {self.playable[int(played_card)]}')
+                    #PLAYABLE IS ADDING BOTH SAME CARDS AND CARDS THAT MATCH COLOR. FIGURE OUT HOW TO MAKE IT ONLY ADD IT ONCE. 
 
                     
 
@@ -77,26 +80,29 @@ class Game:
     
     def show_current_card(self):
         print("-----TOP DECK-----")
-        print(f"[[{self.current_card}]]")
+        print(f"{self.current_card}")
+        print("------------------")
 
     def playable_cards(self):
-        playable = []
+        self.playable =[]
         for card in self.current_player.hand:
             if (card == self.current_card):
-                playable.append(card) #same card 
-            elif (card.get_color() == self.current_card.get_color()):
-                playable.append(card) #matches color
-            elif (card.get_number() == self.current_card.get_number()):
-                playable.append(card) #matches number
+                self.playable.append(card) #same card 
+            if (card.get_color() == self.current_card.get_color()):
+                self.playable.append(card) #matches color
+            if (card.get_number() == self.current_card.get_number()):
+                self.playable.append(card) #matches number
 
-        if not playable:
+        if not self.playable:
             x = input("No playable cards, please type '0' to draw") 
             return x   
         else:
-            for card in playable:
-                print(f'Here are your playable cards: {card}')
-                x = input("Would you like to play a card or draw? 1 for play and 0 for draw")
-                return x 
+            print("-----PLAYABLE-----")
+            for card in self.playable:
+                print(card)
+            print('------------------')
+            x = input("Would you like to play a card or draw? 1 for play and 0 for draw")
+            return x 
 
     
 
