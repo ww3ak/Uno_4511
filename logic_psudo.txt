@@ -16,4 +16,9 @@ If none present or player wants to draw --> 0
     if 0:
     player draws card
     added to hand 
+    if 1:
+
+    i think if each card had an assigned number within the players hand it would work better
+    this way the player could just pick waht number card within the hand they wanted to play
+    
 '''

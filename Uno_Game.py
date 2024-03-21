@@ -26,17 +26,43 @@ class Game:
         self.current_player_index = random.randrange(self.num_players)
         print(f"Starting with Player {self.players[self.current_player_index].player_id}")
 
-        while True: 
-            self.current_player = self.players[self.current_player_index]
+        while True: #game loop
+            print("-----NEW GAME-----")
+            self.current_player = self.players[self.current_player_index] #sets current player
+
+            print("-----PLAYER'S TURN-----")
             print(f"Player {self.current_player.player_id}'s turn")
-            self.show_current_card()
-            # print(f"Player {self.current_player.player_id}, here is your hand:")
-            # self.current_player.show_hand()
-            response = self.playable_cards()
-            if (response == '0'):
-                self.current_player.hand.append(self.current_player.draw(self.deck, 1))
+
+            turn_ended = False #determines if players turn is over
+            while not turn_ended:
+                self.show_current_card() #shows current top deck card
+                print(f"Player {self.current_player.player_id}, here is your hand:")
                 self.current_player.show_hand()
-                #not sure why its printing a none at the end.fix pls
+                response = self.playable_cards()
+
+                if (response == '0'):#player chooses to draw
+                    print(f"Player {self.current_player.player_id} draws a card")
+                    self.current_player.draw(self.deck, 1) #player draws
+                    self.current_player.show_hand() #show player new hand
+                elif (response == '1'):#player chooses to play
+                    cnt = 0
+                    for card in self.current_player.hand:
+                        print(f'[{cnt}]: {card}') 
+                        cnt +=1
+                    played_card = input(f"Please choose the number of the card you would like to play.")
+                    print(f'Player {self.current_player.player_id} plays a {self.current_player.hand[int(played_card)]}')
+
+                    
+
+
+
+
+
+                    turn_ended = True
+                    
+                
+
+                
                 
                 
 
@@ -50,26 +76,25 @@ class Game:
             print(card)
     
     def show_current_card(self):
-        print(f"TOP DECK: {self.current_card}")
+        print("-----TOP DECK-----")
+        print(f"[[{self.current_card}]]")
 
     def playable_cards(self):
         playable = []
-        # for card in self.current_player.hand:
-        #     if (card == self.current_card):
-        #         playable.append(card) #same card 
-        #     elif (card.get_color() == self.current_card.get_color()):
-        #         # print(card.get_color())
-        #         playable.append(card) #matches color
-        #     elif (card.get_number() == self.current_card.get_number()):
-        #         # print(card.get_number())
-        #         playable.append(card) #matches number
+        for card in self.current_player.hand:
+            if (card == self.current_card):
+                playable.append(card) #same card 
+            elif (card.get_color() == self.current_card.get_color()):
+                playable.append(card) #matches color
+            elif (card.get_number() == self.current_card.get_number()):
+                playable.append(card) #matches number
 
         if not playable:
             x = input("No playable cards, please type '0' to draw") 
             return x   
         else:
             for card in playable:
-                print(f'Here are your playable cards {card}')
+                print(f'Here are your playable cards: {card}')
                 x = input("Would you like to play a card or draw? 1 for play and 0 for draw")
                 return x 
 
