@@ -45,31 +45,46 @@ class Game:
                     print(f"Player {self.current_player.player_id} draws a card")
                     self.current_player.draw(self.deck, 1) #player draws
                     self.current_player.show_hand() #show player new hand
+
+                    self.playable_cards(check_only=True)
+                    if self.playable:  # If there are playable cards after drawing
+                        print("You drew a playable card!")
+                        response = '1'  # Set response to 'play a card'
+                        11
                 elif (response == '1'):#player chooses to play
                     cnt = 0
                     for card in self.playable:
                         print(f'[{cnt}]: {card}') 
                         cnt +=1
+
+
                     self.show_current_card()
                     played_card = input(f"Please choose the number of the card you would like to play.")
                     print(f'Player {self.current_player.player_id} plays a {self.playable[int(played_card)]}')
-                    #PLAYABLE IS ADDING BOTH SAME CARDS AND CARDS THAT MATCH COLOR. FIGURE OUT HOW TO MAKE IT ONLY ADD IT ONCE. 
 
-                    
-
-
-
+                    self.current_player.hand.remove(self.playable[int(played_card)])
+                    self.discard_pile.append(self.current_card)#places it on top of discard pile
+                    self.current_card = self.playable[int(played_card)]#updates current card
 
 
+                    if self.check_for_winner():  # Check if the game has a winner
+                        break  # End the game if there is a winner
+                
                     turn_ended = True
-                    
-                
 
-                
                 
                 
 
             break
+    
+    def check_for_winner(self):
+        for player in self.players:
+            if len(player.hand) == 0:  # Player has no cards left
+                print(f"Player {player.player_id} wins the game!")
+                return True  # Indicates the game has a winner
+        return False  # No winner yet, the game continues
+
+
 
     def next_player(self):
         self.current_player_index = (self.current_player_index + 1) % self.num_players
@@ -83,27 +98,25 @@ class Game:
         print(f"{self.current_card}")
         print("------------------")
 
-    def playable_cards(self):
-        self.playable =[]
+
+    def playable_cards(self, check_only=False):
+        self.playable = []
         for card in self.current_player.hand:
-            if (card == self.current_card):
-                self.playable.append(card) #same card 
-            if (card.get_color() == self.current_card.get_color()):
-                self.playable.append(card) #matches color
-            if (card.get_number() == self.current_card.get_number()):
-                self.playable.append(card) #matches number
+            if card == self.current_card or card.get_color() == self.current_card.get_color() or card.get_number() == self.current_card.get_number():
+                self.playable.append(card)  # Card is playable
 
         if not self.playable:
-            x = input("No playable cards, please type '0' to draw") 
-            return x   
+            if not check_only:
+                x = input("No playable cards, please type '0' to draw") 
+                return x
         else:
-            print("-----PLAYABLE-----")
-            for card in self.playable:
-                print(card)
-            print('------------------')
-            x = input("Would you like to play a card or draw? 1 for play and 0 for draw")
-            return x 
-
+            if not check_only:
+                print("-----PLAYABLE-----")
+                for card in self.playable:
+                    print(card)
+                print('------------------')
+                x = input("Would you like to play a card or draw? 1 for play and 0 for draw")
+                return x
     
 
 class Player:
